@@ -1,6 +1,9 @@
 package br.com.ficticiusclean.model;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +15,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Vehicle extends EntityBase {
 
     private static final long serialVersionUID = 8326591665858964370L;
@@ -31,8 +35,8 @@ public class Vehicle extends EntityBase {
     private Long manufacturingDate;
 
     @Column(name = "gas_consumption_city")
-    private double gasConsumptionCity;
+    private BigDecimal gasConsumptionCity;
 
     @Column(name = "gas_consumption_road")
-    private double gasConsumptionRoad;
+    private BigDecimal gasConsumptionRoad;
 }

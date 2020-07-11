@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VehicleBrandDTO extends DTOBase {
 
-    private Long id;
+	private Long id;
 
-    private String name;
+	private String name;
 
 }

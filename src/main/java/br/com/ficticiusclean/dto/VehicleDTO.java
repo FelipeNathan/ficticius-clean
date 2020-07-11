@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 @Data
@@ -23,12 +24,12 @@ public class VehicleDTO extends DTOBase {
 
     private Long manufacturingDate;
 
-    private double gasConsumptionCity;
+    private BigDecimal gasConsumptionCity;
 
-    private double gasConsumptionRoad;
+    private BigDecimal gasConsumptionRoad;
 
-    private double gasConsumptionTotal;
+    private BigDecimal gasConsumptionTotal;
 
-    private double priceConsumptionTotal;
+    private BigDecimal priceConsumptionTotal;
 
 }
