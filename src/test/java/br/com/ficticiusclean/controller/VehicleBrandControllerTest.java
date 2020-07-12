@@ -1,5 +1,8 @@
 package br.com.ficticiusclean.controller;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import javax.inject.Inject;
 
 import org.junit.jupiter.api.Assertions;
@@ -23,6 +26,9 @@ import br.com.ficticiusclean.rest.RestUtils;
 @ContextConfiguration(classes = { FicticiuscleanApplication.class, RestUtils.class })
 public class VehicleBrandControllerTest {
 
+	private final String HONDA = "HONDA";
+	private final String VEHICLE_BRAND_URI = "vehicle-brand";
+
 	@LocalServerPort
 	private int port;
 
@@ -39,17 +45,20 @@ public class VehicleBrandControllerTest {
 	public void shouldReturnBadRequest() throws JsonProcessingException {
 
 		VehicleBrandDTO dto = VehicleBrandDTO.builder().build();
-		ResponseEntity<String> response = restUtils.post("vehicle-brand", dto);
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+		ResponseEntity<String> response = restUtils.post(VEHICLE_BRAND_URI, dto);
+
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 
 	@Test
 	public void shouldReturnTheEntityUpdated() throws JsonProcessingException {
 
-		VehicleBrandDTO dto = VehicleBrandDTO.builder().name("HONDA").build();
-		ResponseEntity<String> response = restUtils.post("vehicle-brand", dto);
+		VehicleBrandDTO dto = VehicleBrandDTO.builder().name(HONDA).build();
 
-		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-		Assertions.assertAll(response::getBody, () -> restUtils.convert(response.getBody(), VehicleBrandDTO.class).getId());
+		ResponseEntity<String> response = restUtils.post(VEHICLE_BRAND_URI, dto);
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertAll(response::getBody, () -> restUtils.convert(response.getBody(), VehicleBrandDTO.class).getId());
 	}
 }

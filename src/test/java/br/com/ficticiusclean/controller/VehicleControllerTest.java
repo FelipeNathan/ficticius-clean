@@ -1,8 +1,11 @@
 package br.com.ficticiusclean.controller;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.math.BigDecimal;
 import javax.inject.Inject;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -24,6 +27,14 @@ import br.com.ficticiusclean.rest.RestUtils;
 @ContextConfiguration(classes = { FicticiuscleanApplication.class, RestUtils.class })
 public class VehicleControllerTest {
 
+	private final String HONDA = "HONDA";
+	private final String CIVIC = "CIVIC";
+	private final String MODEL_2010 = "2010";
+	private final String VEHICLE_BRAND_URI = "vehicle-brand";
+	private final String VEHICLE_URI = "vehicle";
+	private final BigDecimal FOUR = new BigDecimal("4");
+	private final BigDecimal THIRTEEN = new BigDecimal("13");
+
 	@LocalServerPort
 	private int port;
 
@@ -40,47 +51,62 @@ public class VehicleControllerTest {
 	public void shouldReturnBadRequestWithBrandRequiredAsReponseBody() throws JsonProcessingException {
 
 		VehicleDTO dto = VehicleDTO.builder().build();
-		ResponseEntity<String> response = restUtils.post("vehicle", dto);
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		Assertions.assertEquals("Brand is required", response.getBody());
+		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Brand is required", response.getBody());
 	}
 
 	@Test
 	public void shouldReturnBadRequestWithModelRequiredAsReponseBody() throws JsonProcessingException {
 
-		VehicleDTO dto = VehicleDTO.builder().brand("HONDA").build();
-		ResponseEntity<String> response = restUtils.post("vehicle", dto);
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		Assertions.assertEquals("Model is required", response.getBody());
+		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).build();
+		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Model is required", response.getBody());
 	}
 
 	@Test
 	public void shouldReturnBadRequestWithNameRequiredAsReponseBody() throws JsonProcessingException {
 
-		VehicleDTO dto = VehicleDTO.builder().brand("HONDA").model("2010").build();
-		ResponseEntity<String> response = restUtils.post("vehicle", dto);
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		Assertions.assertEquals("Name is required", response.getBody());
+		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).model(MODEL_2010).build();
+		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Name is required", response.getBody());
 	}
 
 	@Test
 	public void shouldReturnBadRequestWithBrandNotFound() throws JsonProcessingException {
 
-		VehicleDTO dto = VehicleDTO.builder().brand("HONDA").model("2010").name("Fiesta").build();
-		ResponseEntity<String> response = restUtils.post("vehicle", dto);
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		Assertions.assertEquals("Entity not found with the given name: HONDA", response.getBody());
+		VehicleDTO dto = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(FOUR)
+				.gasConsumptionRoad(THIRTEEN)
+				.build();
+
+		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
+
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		assertEquals("Entity not found with the given name: " + HONDA, response.getBody());
 	}
 
 	@Test
 	public void shouldReturnTheEntityUpdated() throws JsonProcessingException {
 
-		VehicleBrandDTO brand = VehicleBrandDTO.builder().name("HONDA").build();
-		restUtils.post("vehicle-brand", brand);
+		VehicleBrandDTO brand = VehicleBrandDTO.builder().name(HONDA).build();
+		VehicleDTO dto = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(FOUR)
+				.gasConsumptionRoad(THIRTEEN)
+				.build();
 
-		VehicleDTO dto = VehicleDTO.builder().brand("HONDA").model("2010").name("Fiesta").build();
-		ResponseEntity<String> response = restUtils.post("vehicle", dto);
-		Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-		Assertions.assertAll(response::getBody, () -> restUtils.convert(response.getBody(), VehicleDTO.class).getId());
+		restUtils.post(VEHICLE_BRAND_URI, brand);
+		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertAll(response::getBody, () -> restUtils.convert(response.getBody(), VehicleDTO.class).getId());
 	}
 }

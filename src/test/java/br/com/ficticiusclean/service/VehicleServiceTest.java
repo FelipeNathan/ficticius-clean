@@ -1,15 +1,19 @@
 package br.com.ficticiusclean.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
 import org.assertj.core.api.BigDecimalAssert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import br.com.ficticiusclean.dto.VehicleConsumptionDTO;
@@ -24,6 +28,24 @@ import br.com.ficticiusclean.repository.VehicleRepository;
 @SpringBootTest
 public class VehicleServiceTest {
 
+	private final BigDecimal ONE = BigDecimal.ONE.setScale(2, RoundingMode.HALF_EVEN);
+	private final BigDecimal TWO = new BigDecimal("2.00");
+	private final BigDecimal FOUR = new BigDecimal("4");
+	private final BigDecimal EIGTH = new BigDecimal("8.00");
+	private final BigDecimal TEN = BigDecimal.TEN.setScale(2, RoundingMode.HALF_EVEN);
+	private final BigDecimal THIRTEEN = new BigDecimal("13");
+	private final BigDecimal SIXTEEN = new BigDecimal("16");
+	private final BigDecimal EIGHTEEN = new BigDecimal("18");
+	private final BigDecimal NEGATIVE_NUMBER = new BigDecimal("-1");
+
+	private final String HONDA = "HONDA";
+	private final String CIVIC = "CIVIC";
+	private final String FIESTA = "FIESTA";
+	private final String SIENA = "SIENA";
+	private final String MODEL_2010 = "2010";
+
+	private final Long ENTITY_ID = 1L;
+
 	@InjectMocks
 	private VehicleService service;
 
@@ -32,9 +54,6 @@ public class VehicleServiceTest {
 
 	@Mock
 	private Vehicle entity;
-
-	@Mock
-	private VehicleDTO dto;
 
 	@Mock
 	private VehicleMapper mapper;
@@ -48,129 +67,185 @@ public class VehicleServiceTest {
 	@Test
 	public void shouldThrowEntityNotFoundException() {
 
-		Mockito.when(dto.getBrand()).thenReturn("HONDA");
-		Mockito.when(dto.getName()).thenReturn("Civic");
-		Mockito.when(dto.getModel()).thenReturn("2010");
-		Mockito.when(brandService.findOneByName("HONDA")).thenReturn(null);
+		VehicleDTO dto = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(FOUR)
+				.gasConsumptionRoad(THIRTEEN)
+				.build();
 
-		Assertions.assertThrows(EntityNotFoundException.class, () -> service.createVehicle(dto));
+		when(brandService.findOneByName(HONDA)).thenReturn(null);
+
+		assertThrows(EntityNotFoundException.class, () -> service.createVehicle(dto));
 	}
 
 	@Test
-	public void shouldNotThrowEntityNotFoundException() {
+	public void shouldCreateVehicleWithSuccess() {
 
-		Mockito.when(dto.getBrand()).thenReturn("HONDA");
-		Mockito.when(dto.getName()).thenReturn("Civic");
-		Mockito.when(dto.getModel()).thenReturn("2010");
-		Mockito.when(mapper.toEntity(dto)).thenReturn(entity);
-		Mockito.when(brandService.findOneByName("HONDA")).thenReturn(brand);
-		Mockito.when(repository.save(entity)).thenReturn(entity);
+		VehicleDTO dto = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(FOUR)
+				.gasConsumptionRoad(THIRTEEN)
+				.build();
 
-		Assertions.assertDoesNotThrow(() -> service.createVehicle(dto));
+		when(mapper.toEntity(dto)).thenReturn(entity);
+		when(brandService.findOneByName(HONDA)).thenReturn(brand);
+		when(entity.getId()).thenReturn(ENTITY_ID);
+		when(repository.save(entity)).thenReturn(entity);
+
+		dto = service.createVehicle(dto);
+
+		assertEquals(HONDA, dto.getBrand());
+		assertEquals(CIVIC, dto.getName());
+		assertEquals(MODEL_2010, dto.getModel());
+		assertEquals(ENTITY_ID, dto.getId());
 	}
 
 	@Test
 	public void shouldThrowBrandIsRequired() {
 
-		Assertions.assertThrows(InvalidEntityException.class, () -> service.validateDTO(dto));
+		VehicleDTO dto = VehicleDTO.builder().build();
+
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dto));
 	}
 
 	@Test
 	public void shouldThrowModelIsRequired() {
 
-		Mockito.when(dto.getBrand()).thenReturn("HONDA");
-		Assertions.assertThrows(InvalidEntityException.class, () -> service.validateDTO(dto));
+		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).build();
+
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dto));
 	}
 
 	@Test
 	public void shouldThrowNameIsRequired() {
 
-		Mockito.when(dto.getBrand()).thenReturn("HONDA");
-		Mockito.when(dto.getModel()).thenReturn("2010");
-		Assertions.assertThrows(InvalidEntityException.class, () -> service.validateDTO(dto));
+		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).model(MODEL_2010).build();
+
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dto));
 	}
 
 	@Test
-	public void shouldNotThrowInvalidEntityException() {
+	public void whenConsumptionIsEmptyShouldThrowGasConsumptionInCityIsRequired() {
 
-		Mockito.when(dto.getName()).thenReturn("Civic");
-		Mockito.when(dto.getBrand()).thenReturn("HONDA");
-		Mockito.when(dto.getModel()).thenReturn("2010");
-		Assertions.assertDoesNotThrow(() -> service.validateDTO(dto));
+		VehicleDTO dtoWithNoConsumption = VehicleDTO.builder().brand(HONDA).name(CIVIC).model(MODEL_2010).gasConsumptionRoad(THIRTEEN).build();
+
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dtoWithNoConsumption));
 	}
 
 	@Test
-	public void shouldIgnoreCalculationWhenZeroDivisor() {
+	public void whenConsumptionNegativeShouldThrowGasConsumptionInCityIsRequired() {
 
-		VehicleDTO fiesta = VehicleDTO.builder().name("Fiesta").gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(BigDecimal.ZERO).build();
-		VehicleConsumptionDTO fiestaConsumption = VehicleConsumptionDTO.builder().name("Fiesta").build();
+		VehicleDTO dtoWithNegativeConsumption = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(NEGATIVE_NUMBER)
+				.gasConsumptionRoad(THIRTEEN)
+				.build();
 
-		Assertions.assertDoesNotThrow(() -> service.calculateConsumptionByVehicle(fiesta, fiestaConsumption, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN));
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dtoWithNegativeConsumption));
 	}
 
 	@Test
-	public void calculateConsumption() {
+	public void whenConsumptionIsEmptyShouldThrowGasConsumptionInRoadIsRequired() {
 
-		BigDecimal quatro = new BigDecimal("4");
-		BigDecimal treze = new BigDecimal("13");
-		BigDecimal dezesseis = new BigDecimal("16");
-		BigDecimal dezoito = new BigDecimal("18");
+		VehicleDTO dtoWithNoConsumption = VehicleDTO.builder().brand(HONDA).name(CIVIC).model(MODEL_2010).gasConsumptionCity(FOUR).build();
 
-		VehicleDTO fiesta = VehicleDTO.builder().name("Fiesta").gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(treze).build();
-		VehicleConsumptionDTO fiestaConsumption = VehicleConsumptionDTO.builder().name("Fiesta").build();
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dtoWithNoConsumption));
+	}
 
-		VehicleDTO civic = VehicleDTO.builder().name("Civic").gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(dezoito).build();
-		VehicleConsumptionDTO civicConsumption = VehicleConsumptionDTO.builder().name("Civic").build();
+	@Test
+	public void whenConsumptionNegativeShouldThrowGasConsumptionInRoadIsRequired() {
 
-		VehicleDTO siena = VehicleDTO.builder().name("Siena").gasConsumptionCity(treze).gasConsumptionRoad(dezesseis).build();
-		VehicleConsumptionDTO sienaConsumption = VehicleConsumptionDTO.builder().name("Siena").build();
+		VehicleDTO dtoWithNegativeConsumption = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(FOUR)
+				.gasConsumptionRoad(NEGATIVE_NUMBER)
+				.build();
 
-		service.calculateConsumptionByVehicle(fiesta, fiestaConsumption, quatro, BigDecimal.TEN, treze);
-		service.calculateConsumptionByVehicle(civic, civicConsumption, quatro, BigDecimal.TEN, treze);
-		service.calculateConsumptionByVehicle(siena, sienaConsumption, quatro, BigDecimal.TEN, treze);
+		assertThrows(InvalidEntityException.class, () -> service.validateDTO(dtoWithNegativeConsumption));
+	}
 
-		BigDecimalAssert fiestaConsumptionTotal = new BigDecimalAssert(fiestaConsumption.getGasConsumptionTotal());
-		BigDecimalAssert fiestaPriceConsumptionTotal = new BigDecimalAssert(fiestaConsumption.getPriceConsumptionTotal());
+	@Test
+	public void shouldValidateWithSuccess() {
 
-		fiestaConsumptionTotal.isEqualTo(new BigDecimal("2.00"));
-		fiestaPriceConsumptionTotal.isEqualTo(new BigDecimal("8.00"));
+		VehicleDTO dto = VehicleDTO.builder()
+				.brand(HONDA)
+				.name(CIVIC)
+				.model(MODEL_2010)
+				.gasConsumptionCity(FOUR)
+				.gasConsumptionRoad(THIRTEEN)
+				.build();
+
+		service.validateDTO(dto);
+
+		assertEquals(HONDA, dto.getBrand());
+		assertEquals(CIVIC, dto.getName());
+		assertEquals(MODEL_2010, dto.getModel());
+		assertEquals(FOUR, dto.getGasConsumptionCity());
+		assertEquals(THIRTEEN, dto.getGasConsumptionRoad());
+	}
+
+	@Test
+	public void shouldIgnoreConsumptionRoadWhenConsumptionRoadIsZero() {
+
+		VehicleDTO civic = VehicleDTO.builder().name(CIVIC).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(BigDecimal.ZERO).build();
+		VehicleConsumptionDTO civicConsumption = VehicleConsumptionDTO.builder().name(CIVIC).build();
+
+		service.calculateConsumptionByVehicle(civic, civicConsumption, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
+
+		assertEquals(TEN, civicConsumption.getPriceConsumptionTotal());
+		assertEquals(ONE, civicConsumption.getGasConsumptionTotal());
+	}
+
+	@Test
+	public void shouldIgnoreConsumptionCityWhenConsumptionCityIsZero() {
+
+		VehicleDTO fiesta = VehicleDTO.builder().name(FIESTA).gasConsumptionCity(BigDecimal.ZERO).gasConsumptionRoad(BigDecimal.TEN).build();
+		VehicleConsumptionDTO fiestaConsumption = VehicleConsumptionDTO.builder().name(FIESTA).build();
+
+		service.calculateConsumptionByVehicle(fiesta, fiestaConsumption, BigDecimal.TEN, BigDecimal.TEN, BigDecimal.TEN);
+
+		assertEquals(TEN, fiestaConsumption.getPriceConsumptionTotal());
+		assertEquals(ONE, fiestaConsumption.getGasConsumptionTotal());
+	}
+
+	@Test
+	public void shouldCalculateConsumption() {
+
+		VehicleDTO civic = VehicleDTO.builder().name(CIVIC).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(THIRTEEN).build();
+		VehicleConsumptionDTO civicConsumption = VehicleConsumptionDTO.builder().name(CIVIC).build();
+
+		service.calculateConsumptionByVehicle(civic, civicConsumption, FOUR, BigDecimal.TEN, THIRTEEN);
 
 		BigDecimalAssert civicConsumptionTotal = new BigDecimalAssert(civicConsumption.getGasConsumptionTotal());
 		BigDecimalAssert civicPriceConsumptionTotal = new BigDecimalAssert(civicConsumption.getPriceConsumptionTotal());
 
-		civicConsumptionTotal.isEqualTo(new BigDecimal("1.72"));
-		civicPriceConsumptionTotal.isEqualTo(new BigDecimal("6.88"));
-
-		BigDecimalAssert sienaConsumptionTotal = new BigDecimalAssert(sienaConsumption.getGasConsumptionTotal());
-		BigDecimalAssert sienaPriceConsumptionTotal = new BigDecimalAssert(sienaConsumption.getPriceConsumptionTotal());
-
-		sienaConsumptionTotal.isEqualTo(new BigDecimal("1.58"));
-		sienaPriceConsumptionTotal.isEqualTo(new BigDecimal("6.32"));
+		civicConsumptionTotal.isEqualTo(TWO);
+		civicPriceConsumptionTotal.isEqualTo(EIGTH);
 	}
 
 	@Test
 	public void rankUpToDownVehicleByConsumptionCost() {
 
-		BigDecimal quatro = new BigDecimal("4");
-		BigDecimal treze = new BigDecimal("13");
-		BigDecimal dezesseis = new BigDecimal("16");
-		BigDecimal dezoito = new BigDecimal("18");
+		VehicleDTO civicDTO = VehicleDTO.builder().name(CIVIC).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(EIGHTEEN).build();
+		VehicleDTO sienaDTO = VehicleDTO.builder().name(SIENA).gasConsumptionCity(THIRTEEN).gasConsumptionRoad(SIXTEEN).build();
+		VehicleDTO fiestaDTO = VehicleDTO.builder().name(FIESTA).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(THIRTEEN).build();
 
-		// Cost: $ 6,88
-		VehicleDTO civicDTO = VehicleDTO.builder().name("Civic").gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(dezoito).build();
-		// Cost: $ 6,32
-		VehicleDTO sienaDTO = VehicleDTO.builder().name("Siena").gasConsumptionCity(treze).gasConsumptionRoad(dezesseis).build();
-		// Cost: $ 8
-		VehicleDTO fiestaDTO = VehicleDTO.builder().name("Fiesta").gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(treze).build();
+		when(service.findAllDTO()).thenReturn(Arrays.asList(civicDTO, sienaDTO, fiestaDTO));
 
-		Mockito.when(service.findAllDTO()).thenReturn(Arrays.asList(civicDTO, sienaDTO, fiestaDTO));
+		List<VehicleConsumptionDTO> dtos = service.calculateConsumption(FOUR, BigDecimal.TEN, THIRTEEN);
 
-		List<VehicleConsumptionDTO> dtos = service.calculateConsumption(quatro, BigDecimal.TEN, treze);
-
-		Assertions.assertNotNull(dtos);
-		Assertions.assertEquals(3, dtos.size());
-		Assertions.assertEquals(dtos.get(0).getName(), "Fiesta");
-		Assertions.assertEquals(dtos.get(1).getName(), "Civic");
-		Assertions.assertEquals(dtos.get(2).getName(), "Siena");
+		assertNotNull(dtos);
+		assertEquals(3, dtos.size());
+		assertEquals(dtos.get(0).getName(), FIESTA);
+		assertEquals(dtos.get(1).getName(), CIVIC);
+		assertEquals(dtos.get(2).getName(), SIENA);
 	}
 }

@@ -86,5 +86,12 @@ public class VehicleService extends ServiceBaseMapperImpl<Vehicle, VehicleDTO> {
 
 		if (StringUtils.isEmpty(dto.getName()))
 			throw new InvalidEntityException("Name is required");
+
+		if (dto.getGasConsumptionCity() == null || dto.getGasConsumptionCity().compareTo(BigDecimal.ZERO) < 0)
+			throw new InvalidEntityException("Gasoline consumption in city is required and have to be more than zero");
+
+		if (dto.getGasConsumptionRoad() == null || dto.getGasConsumptionRoad().compareTo(BigDecimal.ZERO) < 0)
+			throw new InvalidEntityException("Gasoline consumption in road is required and have to be more than zero");
+
 	}
 }
