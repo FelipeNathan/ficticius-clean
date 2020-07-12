@@ -27,9 +27,4 @@ public class VehicleDTO extends DTOBase {
     private BigDecimal gasConsumptionCity;
 
     private BigDecimal gasConsumptionRoad;
-
-    private BigDecimal gasConsumptionTotal;
-
-    private BigDecimal priceConsumptionTotal;
-
 }
