@@ -12,9 +12,10 @@ import java.util.List;
 
 import org.assertj.core.api.BigDecimalAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import br.com.ficticiusclean.dto.VehicleConsumptionDTO;
 import br.com.ficticiusclean.dto.VehicleDTO;
@@ -25,7 +26,7 @@ import br.com.ficticiusclean.model.Vehicle;
 import br.com.ficticiusclean.model.VehicleBrand;
 import br.com.ficticiusclean.repository.VehicleRepository;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class VehicleServiceTest {
 
 	private final BigDecimal ONE = BigDecimal.ONE.setScale(2, RoundingMode.HALF_EVEN);
