@@ -17,7 +17,7 @@ This API calculate the gasoline consumption and rank all cars registered in data
     
 #### API
 For information about API access `http://localhost:8080/swagger-ui.html`
-![api doc]("/images/api-doc.png?raw=true")
+![api doc](/images/api-doc.png?raw=true)
     
 #### Usage
 First of all, you have to register an vehicle brand
