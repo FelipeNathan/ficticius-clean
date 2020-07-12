@@ -5,7 +5,8 @@ This API calculate the gasoline consumption and rank all cars registered in data
 #### Prerequisites
 * Maven
 * Java 8+ 
- 
+* Lombok
+
 #### Build
 * Run `mvn clean package`
     * The packate will be generated at `/target`
