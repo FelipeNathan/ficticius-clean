@@ -1,4 +1,5 @@
 # Ficticius-Clean
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FelipeNathan_Routed-Messaging&metric=alert_status)](https://sonarcloud.io/dashboard?id=FelipeNathan_Routed-Messaging)
 
 This API calculate the gasoline consumption and rank all cars registered in database given the price of gasoline, total km to be traveled in the city and total km to be traveled in road.
 
