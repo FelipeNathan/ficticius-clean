@@ -4,9 +4,9 @@ import br.com.ficticiusclean.model.EntityBase;
 
 import java.util.List;
 
-public interface ServiceBase <TEntity extends EntityBase>  {
+public interface ServiceBase <T extends EntityBase>  {
 
-    List<TEntity> findAll();
+    List<T> findAll();
 
-    TEntity findOne(Long id);
+    T findOne(Long id);
 }

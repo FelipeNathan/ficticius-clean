@@ -6,18 +6,18 @@ import br.com.ficticiusclean.repository.RepositoryBase;
 import javax.inject.Inject;
 import java.util.List;
 
-public abstract class ServiceBaseImpl<TEntity extends EntityBase> implements ServiceBase<TEntity> {
+public abstract class ServiceBaseImpl<T extends EntityBase> implements ServiceBase<T> {
 
     @Inject
-    protected RepositoryBase<TEntity> repositoryBase;
+    protected RepositoryBase<T> repositoryBase;
 
     @Override
-    public List<TEntity> findAll() {
+    public List<T> findAll() {
         return repositoryBase.findAll();
     }
 
     @Override
-    public TEntity findOne(Long id) {
+    public T findOne(Long id) {
         return repositoryBase.getOne(id);
     }
 }

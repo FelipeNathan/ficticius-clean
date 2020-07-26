@@ -2,13 +2,13 @@ package br.com.ficticiusclean.mapper;
 
 import java.util.List;
 
-public interface BaseMapper<DTO, Model> {
+public interface BaseMapper<D, M> {
 
-    DTO toDTO(Model model);
+    D toDTO(M model);
 
-    List<DTO> toDTOs(List<Model> models);
+    List<D> toDTOs(List<M> models);
 
-    Model toEntity(DTO dto);
+    M toEntity(D dto);
 
-    List<Model> toEntities(List<DTO> dto);
+    List<M> toEntities(List<D> dto);
 }

@@ -27,7 +27,7 @@ import br.com.ficticiusclean.rest.RestUtils;
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @ContextConfiguration(classes = { FicticiuscleanApplication.class, RestUtils.class })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class VehicleControllerTest {
+class VehicleControllerTest {
 
 	private final String HONDA = "HONDA";
 	private final String CIVIC = "CIVIC";
@@ -44,13 +44,13 @@ public class VehicleControllerTest {
 	private RestUtils restUtils;
 
 	@BeforeAll
-	public void configure() {
+	void configure() {
 
 		restUtils.setPort(port);
 	}
 
 	@Test
-	public void shouldReturnBadRequestWithBrandRequiredAsReponseBody() throws JsonProcessingException {
+	void shouldReturnBadRequestWithBrandRequiredAsReponseBody() throws JsonProcessingException {
 
 		VehicleDTO dto = VehicleDTO.builder().build();
 		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
@@ -59,7 +59,7 @@ public class VehicleControllerTest {
 	}
 
 	@Test
-	public void shouldReturnBadRequestWithModelRequiredAsReponseBody() throws JsonProcessingException {
+	void shouldReturnBadRequestWithModelRequiredAsReponseBody() throws JsonProcessingException {
 
 		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).build();
 		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
@@ -68,7 +68,7 @@ public class VehicleControllerTest {
 	}
 
 	@Test
-	public void shouldReturnBadRequestWithNameRequiredAsReponseBody() throws JsonProcessingException {
+	void shouldReturnBadRequestWithNameRequiredAsReponseBody() throws JsonProcessingException {
 
 		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).model(MODEL_2010).build();
 		ResponseEntity<String> response = restUtils.post(VEHICLE_URI, dto);
@@ -77,7 +77,7 @@ public class VehicleControllerTest {
 	}
 
 	@Test
-	public void shouldReturnBadRequestWithBrandNotFound() throws JsonProcessingException {
+	void shouldReturnBadRequestWithBrandNotFound() throws JsonProcessingException {
 
 		VehicleDTO dto = VehicleDTO.builder()
 				.brand(HONDA)
@@ -94,7 +94,7 @@ public class VehicleControllerTest {
 	}
 
 	@Test
-	public void shouldReturnTheEntityUpdated() throws JsonProcessingException {
+	void shouldReturnTheEntityUpdated() throws JsonProcessingException {
 
 		VehicleBrandDTO brand = VehicleBrandDTO.builder().name(HONDA).build();
 		VehicleDTO dto = VehicleDTO.builder()

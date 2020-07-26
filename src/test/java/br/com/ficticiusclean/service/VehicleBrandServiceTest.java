@@ -12,7 +12,7 @@ import br.com.ficticiusclean.dto.VehicleBrandDTO;
 import br.com.ficticiusclean.exception.InvalidEntityException;
 
 @ExtendWith(SpringExtension.class)
-public class VehicleBrandServiceTest {
+class VehicleBrandServiceTest {
 
 	private final String HONDA = "HONDA";
 
@@ -20,7 +20,7 @@ public class VehicleBrandServiceTest {
 	private VehicleBrandService service;
 
 	@Test
-	public void shouldThrowInvalidEntityException() {
+	void shouldThrowInvalidEntityException() {
 
 		VehicleBrandDTO dto = VehicleBrandDTO.builder().build();
 
@@ -28,7 +28,7 @@ public class VehicleBrandServiceTest {
 	}
 
 	@Test
-	public void shouldNotThrowException() {
+	void shouldNotThrowException() {
 
 		VehicleBrandDTO dto = VehicleBrandDTO.builder().name(HONDA).build();
 

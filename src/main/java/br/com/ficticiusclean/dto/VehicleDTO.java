@@ -6,13 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleDTO extends DTOBase {
+public class VehicleDTO implements DTOBase {
 
     private Long id;
 

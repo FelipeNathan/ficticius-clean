@@ -27,7 +27,7 @@ import br.com.ficticiusclean.model.VehicleBrand;
 import br.com.ficticiusclean.repository.VehicleRepository;
 
 @ExtendWith(SpringExtension.class)
-public class VehicleServiceTest {
+class VehicleServiceTest {
 
 	private final BigDecimal ONE = BigDecimal.ONE.setScale(2, RoundingMode.HALF_EVEN);
 	private final BigDecimal TWO = new BigDecimal("2.00");
@@ -66,7 +66,7 @@ public class VehicleServiceTest {
 	private VehicleBrand brand;
 
 	@Test
-	public void shouldThrowEntityNotFoundException() {
+	void shouldThrowEntityNotFoundException() {
 
 		VehicleDTO dto = VehicleDTO.builder()
 				.brand(HONDA)
@@ -82,7 +82,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldCreateVehicleWithSuccess() {
+	void shouldCreateVehicleWithSuccess() {
 
 		VehicleDTO dto = VehicleDTO.builder()
 				.brand(HONDA)
@@ -106,7 +106,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldThrowBrandIsRequired() {
+	void shouldThrowBrandIsRequired() {
 
 		VehicleDTO dto = VehicleDTO.builder().build();
 
@@ -114,7 +114,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldThrowModelIsRequired() {
+	void shouldThrowModelIsRequired() {
 
 		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).build();
 
@@ -122,7 +122,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldThrowNameIsRequired() {
+	void shouldThrowNameIsRequired() {
 
 		VehicleDTO dto = VehicleDTO.builder().brand(HONDA).model(MODEL_2010).build();
 
@@ -130,7 +130,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenConsumptionIsEmptyShouldThrowGasConsumptionInCityIsRequired() {
+	void whenConsumptionIsEmptyShouldThrowGasConsumptionInCityIsRequired() {
 
 		VehicleDTO dtoWithNoConsumption = VehicleDTO.builder().brand(HONDA).name(CIVIC).model(MODEL_2010).gasConsumptionRoad(THIRTEEN).build();
 
@@ -138,7 +138,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenConsumptionNegativeShouldThrowGasConsumptionInCityIsRequired() {
+	void whenConsumptionNegativeShouldThrowGasConsumptionInCityIsRequired() {
 
 		VehicleDTO dtoWithNegativeConsumption = VehicleDTO.builder()
 				.brand(HONDA)
@@ -152,7 +152,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenConsumptionIsEmptyShouldThrowGasConsumptionInRoadIsRequired() {
+	void whenConsumptionIsEmptyShouldThrowGasConsumptionInRoadIsRequired() {
 
 		VehicleDTO dtoWithNoConsumption = VehicleDTO.builder().brand(HONDA).name(CIVIC).model(MODEL_2010).gasConsumptionCity(FOUR).build();
 
@@ -160,7 +160,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenConsumptionNegativeShouldThrowGasConsumptionInRoadIsRequired() {
+	void whenConsumptionNegativeShouldThrowGasConsumptionInRoadIsRequired() {
 
 		VehicleDTO dtoWithNegativeConsumption = VehicleDTO.builder()
 				.brand(HONDA)
@@ -174,7 +174,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldValidateWithSuccess() {
+	void shouldValidateWithSuccess() {
 
 		VehicleDTO dto = VehicleDTO.builder()
 				.brand(HONDA)
@@ -194,7 +194,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldIgnoreConsumptionRoadWhenConsumptionRoadIsZero() {
+	void shouldIgnoreConsumptionRoadWhenConsumptionRoadIsZero() {
 
 		VehicleDTO civic = VehicleDTO.builder().name(CIVIC).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(BigDecimal.ZERO).build();
 		VehicleConsumptionDTO civicConsumption = VehicleConsumptionDTO.builder().name(CIVIC).build();
@@ -206,7 +206,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldIgnoreConsumptionCityWhenConsumptionCityIsZero() {
+	void shouldIgnoreConsumptionCityWhenConsumptionCityIsZero() {
 
 		VehicleDTO fiesta = VehicleDTO.builder().name(FIESTA).gasConsumptionCity(BigDecimal.ZERO).gasConsumptionRoad(BigDecimal.TEN).build();
 		VehicleConsumptionDTO fiestaConsumption = VehicleConsumptionDTO.builder().name(FIESTA).build();
@@ -218,7 +218,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void shouldCalculateConsumption() {
+	void shouldCalculateConsumption() {
 
 		VehicleDTO civic = VehicleDTO.builder().name(CIVIC).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(THIRTEEN).build();
 		VehicleConsumptionDTO civicConsumption = VehicleConsumptionDTO.builder().name(CIVIC).build();
@@ -233,7 +233,7 @@ public class VehicleServiceTest {
 	}
 
 	@Test
-	public void rankUpToDownVehicleByConsumptionCost() {
+	void rankUpToDownVehicleByConsumptionCost() {
 
 		VehicleDTO civicDTO = VehicleDTO.builder().name(CIVIC).gasConsumptionCity(BigDecimal.TEN).gasConsumptionRoad(EIGHTEEN).build();
 		VehicleDTO sienaDTO = VehicleDTO.builder().name(SIENA).gasConsumptionCity(THIRTEEN).gasConsumptionRoad(SIXTEEN).build();

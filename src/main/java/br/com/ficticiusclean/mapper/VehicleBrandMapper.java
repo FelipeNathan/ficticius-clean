@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class VehicleBrandMapper implements BaseMapper<VehicleBrandDTO, VehicleBrand> {
+public interface VehicleBrandMapper extends BaseMapper<VehicleBrandDTO, VehicleBrand> {
 }

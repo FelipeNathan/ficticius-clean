@@ -25,7 +25,7 @@ import br.com.ficticiusclean.rest.RestUtils;
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @ContextConfiguration(classes = { FicticiuscleanApplication.class, RestUtils.class })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class VehicleBrandControllerTest {
+class VehicleBrandControllerTest {
 
 	private final String HONDA = "HONDA";
 	private final String VEHICLE_BRAND_URI = "vehicle-brand";
@@ -43,7 +43,7 @@ public class VehicleBrandControllerTest {
 	}
 
 	@Test
-	public void shouldReturnBadRequest() throws JsonProcessingException {
+	void shouldReturnBadRequest() throws JsonProcessingException {
 
 		VehicleBrandDTO dto = VehicleBrandDTO.builder().build();
 
@@ -53,7 +53,7 @@ public class VehicleBrandControllerTest {
 	}
 
 	@Test
-	public void shouldReturnTheEntityUpdated() throws JsonProcessingException {
+	void shouldReturnTheEntityUpdated() throws JsonProcessingException {
 
 		VehicleBrandDTO dto = VehicleBrandDTO.builder().name(HONDA).build();
 

@@ -5,13 +5,13 @@ import br.com.ficticiusclean.model.EntityBase;
 
 import java.util.List;
 
-public interface ServiceBaseMapper<TEntity extends EntityBase, TDTO extends DTOBase> extends ServiceBase<TEntity> {
+public interface ServiceBaseMapper<T extends EntityBase, D extends DTOBase> extends ServiceBase<T> {
 
-    List<TDTO> findAllDTO();
+    List<D> findAllDTO();
 
-    TDTO toDTO(TEntity model);
+    D toDTO(T model);
 
-    List<TDTO> toDTOs(List<TEntity> models);
+    List<D> toDTOs(List<T> models);
 
-    TDTO findDtoById(Long id);
+    D findDtoById(Long id);
 }

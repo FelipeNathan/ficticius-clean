@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleBrandDTO extends DTOBase {
+public class VehicleBrandDTO implements DTOBase {
 
 	private Long id;
 

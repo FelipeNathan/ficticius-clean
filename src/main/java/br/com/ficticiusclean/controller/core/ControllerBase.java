@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.inject.Inject;
 import java.util.List;
 
-public abstract class ControllerBase<TEntity extends EntityBase, TDTO extends DTOBase, TService extends ServiceBaseMapper<TEntity, TDTO>> {
+public abstract class ControllerBase<T extends EntityBase, D extends DTOBase, S extends ServiceBaseMapper<T, D>> {
 
     @Inject
-    protected TService service;
+    protected S service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TDTO>> findAll() {
+    public ResponseEntity<List<D>> findAll() {
         return new ResponseEntity<>(this.service.findAllDTO(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TDTO> findOne(Long id) {
+    public ResponseEntity<D> findOne(Long id) {
         return new ResponseEntity<>(this.service.findDtoById(id), HttpStatus.OK);
     }
 
